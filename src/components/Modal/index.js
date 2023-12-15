@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/components/modal.scss';
 import artistsServices from '@/services/artists.services';
+import albumsServices from '@/services/albums.services';
 
 const Index = props => {
   const [artist, setArtist] = useState({
@@ -71,14 +72,23 @@ const Index = props => {
     }
   };
 
-  const applyChanges = (e, id, new_artist) => {
+  const applyChanges = (e, id, new_values) => {
     e.preventDefault();
-    artistsServices
-      .updateArtist(id, new_artist)
-      .then(user => {
-        console.log(user);
-      })
-      .catch(err => console.log(err));
+    if (props.type == 'artist') {
+      artistsServices
+        .updateArtist(id, new_values)
+        .then(artist => {
+          console.log(artist);
+        })
+        .catch(err => console.log(err));
+    } else if (props.type == 'album') {
+      albumsServices
+        .updateAlbum(id, new_values)
+        .then(album => {
+          console.log(album);
+        })
+        .catch(err => console.log(err));
+    }
   };
 
   return props.isActive ? (
@@ -174,40 +184,3 @@ const Index = props => {
 };
 
 export default Index;
-
-//657c16161f653b8b88011684
-
-// {
-//   "_id": "657c16161f653b8b8801166b",
-//   "name": "Elvis Presley",
-//   "__v": 0,
-//   "albums": [
-//       "657c16311f653b8b8801539e"
-//   ],
-//   "tracks": [
-//       "657c1616443a5db04091c22a",
-//       "657c1617443a5db04091c231",
-//       "657c1617443a5db04091c238",
-//       "657c1617443a5db04091c23f",
-//       "657c1617443a5db04091c246",
-//       "657c1617443a5db04091c24d",
-//       "657c1617443a5db04091c254",
-//       "657c1617443a5db04091c25b",
-//       "657c1617443a5db04091c262",
-//       "657c1617443a5db04091c269",
-//       "657c1617443a5db04091c270",
-//       "657c1617443a5db04091c277",
-//       "657c1631443a5db04091cbba",
-//       "657c1631443a5db04091cbc1",
-//       "657c1631443a5db04091cbc8",
-//       "657c1631443a5db04091cbcf",
-//       "657c1631443a5db04091cbd6",
-//       "657c1631443a5db04091cbdd",
-//       "657c1631443a5db04091cbe4",
-//       "657c1632443a5db04091cbeb",
-//       "657c1632443a5db04091cbf2",
-//       "657c1632443a5db04091cbf9",
-//       "657c1632443a5db04091cc00",
-//       "657c1632443a5db04091cc07"
-//   ]
-// }
