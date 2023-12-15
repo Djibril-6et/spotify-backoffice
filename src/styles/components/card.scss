@@ -1,0 +1,69 @@
+@import "../variables.scss";
+
+.card-wrapper {
+  display: flex;
+  width: 95%;
+  height: 60px;
+  margin: auto;
+
+  &:hover {
+    scale: 1.05;
+    transition: 0.3s;
+  }
+
+  &__left {
+    width: 70%;
+    display: flex;
+    align-items: center;
+    border-radius: 20px 0px 0px 5px;
+    background-color: #222222;
+
+    &:hover {
+      cursor: pointer;
+    }
+
+    &__link {
+
+      &__text {
+        text-decoration: none;
+        color: $secondary-color;
+        font-size: 18px;
+        margin: 0px 0px 0px 10px;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+
+  &__right {
+    display: flex;
+    width: 30%;
+    align-items: center;
+    border-radius: 0px 5px 20px 0px;
+    background-color: #222222;
+
+    &__edit-icon {
+      width: 50%;
+      height: 50%;
+
+      &:hover {
+        cursor: pointer;
+        scale: 1.1;
+        transition: 0.3s;
+      }
+    }
+
+    &__delete-icon {
+      width: 50%;
+      height: 50%;
+
+      &:hover {
+        cursor: pointer;
+        scale: 1.1;
+        transition: 0.3s;
+      }
+    }
+  }
+}
