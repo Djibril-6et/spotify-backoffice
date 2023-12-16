@@ -11,17 +11,37 @@ import Modal from '../../../components/Modal';
 const Index = () => {
   const [artists, setArtists] = useState([]);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [myArtist, setMyArtist] = useState();
+  const [myArtist, setMyArtist] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [delayTimeout, setDelayTimeout] = useState(null);
 
   useEffect(() => {
-    artistsServices
-      .getArtists()
-      .then(res => {
-        console.log('res ', res);
-        setArtists(res);
-      })
-      .catch(err => console.log('err ', err));
-  }, []);
+    if (searchTerm.trim() !== '') {
+      if (delayTimeout) {
+        clearTimeout(delayTimeout);
+      }
+
+      const newTimeout = setTimeout(() => {
+        artistsServices
+          .getArtists()
+          .then(res => {
+            console.log('res ', res);
+            setArtists(res);
+          })
+          .catch(err => console.log('err ', err));
+      }, 30000);
+
+      setDelayTimeout(newTimeout);
+    } else {
+      artistsServices
+        .getArtists()
+        .then(res => {
+          console.log('res ', res);
+          setArtists(res);
+        })
+        .catch(err => console.log('err ', err));
+    }
+  }, [searchTerm]);
 
   return (
     <>
@@ -40,22 +60,31 @@ const Index = () => {
         <div className="artist__list">
           <div className="artist__list__high">
             <p className="artist__list__high__title">Artist List</p>
-            <input type="text" className="artist__list__high__searchbar" />
+            <input
+              type="text"
+              className="artist__list__high__searchbar"
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+            />
           </div>
           <ul className="artist__list__list">
             {artists &&
-              artists.map(artist => (
-                <li
-                  key={artist.id}
-                  onClick={e => {
-                    e.preventDefault;
-                    setMyArtist(artist);
-                    console.log(myArtist);
-                    setIsModalActive(!isModalActive);
-                  }}>
-                  <Card type="artist" artist={artist} />
-                </li>
-              ))}
+              artists
+                .filter(artist =>
+                  artist.name.toLowerCase().includes(searchTerm.toLowerCase()),
+                )
+                .map(artist => (
+                  <li
+                    key={artist._id}
+                    onClick={e => {
+                      e.preventDefault();
+                      setMyArtist(artist);
+                      console.log(myArtist);
+                      setIsModalActive(!isModalActive);
+                    }}>
+                    <Card type="artist" artist={artist} />
+                  </li>
+                ))}
           </ul>
         </div>
       </main>
