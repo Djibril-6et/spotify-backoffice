@@ -29,7 +29,7 @@ const Index = () => {
               </Link>
             </li>
             <li className="header__main__right__nav__list__item">
-              <Link href="/">
+              <Link href="/pages/Tracks">
                 <p className="nav__link">Tracks</p>
               </Link>
             </li>

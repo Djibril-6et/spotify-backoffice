@@ -2,16 +2,16 @@
 import React, {useEffect, useState} from 'react';
 import Link from 'next/link';
 import Header from '../../../components/Header';
-import artistsServices from '@/services/artists.services';
+import tracksServices from '@/services/tracks.services';
 import '../../../styles/global/global.scss';
 import '../../../styles/pages/artists.scss';
 import Card from '../../../components/Card';
 import Modal from '../../../components/Modal';
 
 const Index = () => {
-  const [artists, setArtists] = useState([]);
+  const [tracks, setTracks] = useState([]);
   const [isModalActive, setIsModalActive] = useState(false);
-  const [myArtist, setMyArtist] = useState('');
+  const [myTrack, setMyTrack] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [delayTimeout, setDelayTimeout] = useState(null);
 
@@ -22,33 +22,33 @@ const Index = () => {
       }
 
       const newTimeout = setTimeout(() => {
-        artistsServices
-          .getArtists()
+        tracksServices
+          .getTracks()
           .then(res => {
             console.log('res ', res);
-            setArtists(res);
+            setTracks(res);
           })
           .catch(err => console.log('err ', err));
       }, 300);
 
       setDelayTimeout(newTimeout);
     } else {
-      artistsServices
-        .getArtists()
+      tracksServices
+        .getTracks()
         .then(res => {
           console.log('res ', res);
-          setArtists(res);
+          setTracks(res);
         })
         .catch(err => console.log('err ', err));
     }
   }, [searchTerm]);
 
   const closeFunction = () => {
-    artistsServices
-      .getArtists()
+    tracksServices
+      .getTracks()
       .then(res => {
         console.log('res ', res);
-        setArtists(res);
+        setTracks(res);
       })
       .catch(err => console.log('err ', err));
     setIsModalActive(!isModalActive);
@@ -56,15 +56,15 @@ const Index = () => {
 
   const [forceUpdateIndex, setForceUpdateIndex] = useState(0);
 
-  const updateArtistList = updatedArtist => {
-    if (updatedArtist && updatedArtist._id) {
-      const updatedArtists = artists.map(artist =>
-        artist._id === updatedArtist._id ? updatedArtist : artist,
+  const updateTrackList = updatedTrack => {
+    if (updatedTrack && updatedTrack._id) {
+      const updatedTracks = tracks.map(track =>
+        track._id === updatedTrack._id ? updatedTrack : track,
       );
-      setArtists(updatedArtists);
+      setTracks(updatedTracks);
       setForceUpdateIndex(prev => prev + 1);
     } else {
-      console.error("L'objet updatedArtist est invalide :", updatedArtist);
+      console.error("L'objet updatedTrack est invalide :", updatedTrack);
     }
   };
 
@@ -76,16 +76,16 @@ const Index = () => {
           <Modal
             isActive={isModalActive}
             closeFunction={() => closeFunction()}
-            type="artist"
-            artist={myArtist}
-            updateArtistList={updateArtistList}
+            type="track"
+            track={myTrack}
+            updateTrackList={updateTrackList}
           />
         ) : (
           ''
         )}
         <div className="artist__list">
           <div className="artist__list__high">
-            <p className="artist__list__high__title">Artist List</p>
+            <p className="artist__list__high__title">Track List</p>
             <input
               type="text"
               className="artist__list__high__searchbar"
@@ -94,21 +94,21 @@ const Index = () => {
             />
           </div>
           <ul className="artist__list__list">
-            {artists &&
-              artists
-                .filter(artist =>
-                  artist.name.toLowerCase().includes(searchTerm.toLowerCase()),
+            {tracks &&
+              tracks
+                .filter(track =>
+                  track.title.toLowerCase().includes(searchTerm.toLowerCase()),
                 )
-                .map(artist => (
+                .map(track => (
                   <li
-                    key={artist._id}
+                    key={track._id}
                     onClick={e => {
                       e.preventDefault();
-                      setMyArtist(artist);
-                      console.log(myArtist);
+                      setMyTrack(track);
+                      console.log(myTrack);
                       setIsModalActive(!isModalActive);
                     }}>
-                    <Card key={artist._id} type="artist" artist={artist} />
+                    <Card key={track._id} type="track" track={track} />
                   </li>
                 ))}
           </ul>

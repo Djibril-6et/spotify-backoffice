@@ -59,7 +59,29 @@ const Index = props => {
           </div>
         </div>
       ) : props.type === 'track' ? (
-        <h1>TRACK</h1>
+        <div className="card-wrapper">
+          <div className="card-wrapper__left">
+            <Link
+              className="card-wrapper__left__link"
+              href={`/track/${props.track._id}`}>
+              <p className="card-wrapper__left__link__text">
+                {props.track.title}
+              </p>
+            </Link>
+          </div>
+          <div className="card-wrapper__right">
+            <Image
+              className="card-wrapper__right__edit-icon"
+              src={EditIcon}
+              alt="EDIT"
+            />
+            <Image
+              className="card-wrapper__right__delete-icon"
+              src={DeleteIcon}
+              alt="DELETE"
+            />
+          </div>
+        </div>
       ) : null}
     </>
   );

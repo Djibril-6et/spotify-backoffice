@@ -72,7 +72,7 @@ const Index = props => {
     }
   };
 
-  const applyChanges = (e, id, new_values) => {
+  const applyChanges = (e, id, new_values, updatedArtist) => {
     e.preventDefault();
     if (props.type == 'artist') {
       artistsServices
@@ -89,6 +89,8 @@ const Index = props => {
         })
         .catch(err => console.log(err));
     }
+    props.updateArtistList(updatedArtist);
+    props.closeFunction();
   };
 
   return props.isActive ? (
@@ -170,7 +172,10 @@ const Index = props => {
               </ul>
             </div>
             <div className="modal__content__bottom">
-              <button onClick={e => applyChanges(e, album._id, album)}>
+              <button
+                onClick={e =>
+                  applyChanges(e, album._id, album, props.updateArtistList)
+                }>
                 Edit
               </button>
             </div>
