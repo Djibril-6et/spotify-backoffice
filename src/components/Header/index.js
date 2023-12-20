@@ -7,14 +7,16 @@ import BlackLogo from '../../assets/logo/black-logo.svg';
 const Index = () => {
   return (
     <div className="header__main">
-      <div className="header__main__left">
-        <Image
-          className="header__main__left__logo"
-          src={BlackLogo}
-          alt="LOGO"
-        />
-        <h1 className="header__main__left__title">BackOffice</h1>
-      </div>
+      <Link href="/">
+        <div className="header__main__left">
+          <Image
+            className="header__main__left__logo"
+            src={BlackLogo}
+            alt="LOGO"
+          />
+          <h1 className="header__main__left__title">BackOffice</h1>
+        </div>
+      </Link>
       <div className="header__main__right">
         <nav className="header__main__right__nav">
           <ul className="header__main__right__nav__list">

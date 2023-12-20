@@ -1,0 +1,85 @@
+@import "../variables.scss";
+
+.home__wrapper {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  justify-content: space-around;
+  align-items: center;
+
+  a {
+    width: 25%;
+    height: 45%;
+  }
+
+  &__left {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #number__left {
+    border-radius: 25px 0px 0px 0px;
+  }
+
+  #type__left {
+    border-radius: 0px 0px 0px 25px;
+  }
+
+  &__middle {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #number__middle {
+    border-radius: 0px;
+  }
+
+  #type__middle {
+    border-radius: 0px;
+  }
+
+  &__right {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #number__right {
+    border-radius: 0px 25px 0px 0px;
+  }
+
+  #type__right {
+    border-radius: 0px 0px 25px 0px;
+  }
+
+  &__content__number {
+    width: 100%;
+    height: 65%;
+    display: flex;
+    align-items: center;
+    background-color: rgba($color: $secondary-color, $alpha: 0.9);
+
+    &__data {
+      text-transform: uppercase;
+      margin: auto;
+    }
+  }
+
+  &__content__type {
+    width: 100%;
+    height: 35%;
+    display: flex;
+    align-items: center;
+    background-color: $secondary-color;
+
+    &__name {
+      text-transform: uppercase;
+      margin: auto;
+    }
+  }
+}

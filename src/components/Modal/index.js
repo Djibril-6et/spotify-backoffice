@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import '../../styles/components/modal.scss';
 import artistsServices from '@/services/artists.services';
 import albumsServices from '@/services/albums.services';
+import Button from '../Button';
+import tracksServices from '@/services/tracks.services';
+import {Toaster, toast} from 'sonner';
 
 const Index = props => {
   const [artist, setArtist] = useState({
@@ -15,6 +18,13 @@ const Index = props => {
     _id: '',
     title: '',
     tracks: [],
+  });
+
+  const [track, setTrack] = useState({
+    _id: '',
+    title: '',
+    duration: '',
+    url: '',
   });
 
   if (props.type == 'artist') {
@@ -41,6 +51,21 @@ const Index = props => {
         tracks: props.album.tracks,
       }));
     }, [props.album._id, props.album.title, props.album.tracks]);
+  } else if (props.type == 'track') {
+    useEffect(() => {
+      setTrack(prevTrack => ({
+        ...prevTrack,
+        _id: props.track._id,
+        title: props.track.title,
+        duration: props.track.duration,
+        url: props.track.url,
+      }));
+    }, [
+      props.track._id,
+      props.track.title,
+      props.track.duration,
+      props.track.url,
+    ]);
   }
 
   const handleInput = e => {
@@ -48,6 +73,8 @@ const Index = props => {
       setArtist({...artist, [e.target.name]: e.target.value});
     } else if (props.type == 'album') {
       setAlbum({...album, [e.target.name]: e.target.value});
+    } else if (props.type == 'track') {
+      setTrack({...track, [e.target.name]: e.target.value});
     }
   };
 
@@ -72,8 +99,8 @@ const Index = props => {
     }
   };
 
-  const applyChanges = (e, id, new_values, updatedArtist) => {
-    e.preventDefault();
+  const applyChanges = (id, new_values, updatedArtist) => {
+    // e.preventDefault();
     if (props.type == 'artist') {
       artistsServices
         .updateArtist(id, new_values)
@@ -88,9 +115,63 @@ const Index = props => {
           console.log(album);
         })
         .catch(err => console.log(err));
+    } else if (props.type == 'track') {
+      tracksServices
+        .updateTrack(id, new_values)
+        .then(track => {
+          console.log(track);
+        })
+        .catch(err => console.log(err));
     }
-    props.updateArtistList(updatedArtist);
+    props.updateList(updatedArtist);
     props.closeFunction();
+  };
+
+  const deleteElement = (e, id) => {
+    e.preventDefault();
+    if (props.type == 'artist') {
+      artistsServices
+        .deleteArtist(id)
+        .then(del => {
+          console.log(del);
+        })
+        .catch(err => console.log(err));
+    } else if (props.type == 'album') {
+      albumsServices
+        .deleteAlbum(id)
+        .then(del => {
+          console.log(del);
+        })
+        .catch(err => console.log(err));
+    } else if (props.type == 'track') {
+      tracksServices
+        .deleteTrack(id)
+        .then(del => {
+          console.log(del);
+        })
+        .catch(err => console.log(err));
+    }
+  };
+
+  const pad = num => {
+    return num < 10 ? `0${num}` : num;
+  };
+
+  const convertDuration = duration => {
+    // Convertir la durée en secondes
+    let seconds = parseInt(duration, 10);
+
+    // Calculer les heures, minutes et secondes
+    let hours = Math.floor(seconds / 3600);
+    let minutes = Math.floor((seconds % 3600) / 60);
+    let remainingSeconds = seconds % 60;
+
+    // Formater le résultat
+    let formattedDuration = `${pad(hours)}:${pad(minutes)}:${pad(
+      remainingSeconds,
+    )}`;
+
+    return formattedDuration;
   };
 
   return props.isActive ? (
@@ -141,9 +222,32 @@ const Index = props => {
               </ul>
             </div>
             <div className="modal__content__bottom">
-              <button onClick={e => applyChanges(e, artist._id, artist)}>
-                Edit
-              </button>
+              <div className="modal__content__bottom__buttons">
+                <Button
+                  label="Edit"
+                  onClickFunction={() =>
+                    toast.warning('Confirm updating ?', {
+                      action: {
+                        label: 'Yes',
+                        onClick: () =>
+                          applyChanges(artist._id, artist, props.updateList),
+                      },
+                    })
+                  }
+                />
+                <Button
+                  label="DELETE"
+                  onClickFunction={() =>
+                    toast.warning('Confirm deleting ?', {
+                      action: {
+                        label: 'Yes',
+                        onClick: e => deleteElement(e, artist._id),
+                      },
+                    })
+                  }
+                />
+                <Toaster richColors closeButton />
+              </div>
             </div>
           </>
         ) : props.type === 'album' ? (
@@ -172,16 +276,80 @@ const Index = props => {
               </ul>
             </div>
             <div className="modal__content__bottom">
-              <button
-                onClick={e =>
-                  applyChanges(e, album._id, album, props.updateArtistList)
-                }>
-                Edit
-              </button>
+              <div className="modal__content__bottom__buttons">
+                <Button
+                  label="Edit"
+                  onClickFunction={() =>
+                    toast.warning('Confirm updating ?', {
+                      action: {
+                        label: 'Yes',
+                        onClick: () =>
+                          applyChanges(album._id, album, props.updateList),
+                      },
+                    })
+                  }
+                />
+                <Button
+                  label="DELETE"
+                  onClickFunction={() =>
+                    toast.warning('Confirm deleting ?', {
+                      action: {
+                        label: 'Yes',
+                        onClick: e => deleteElement(e, album._id),
+                      },
+                    })
+                  }
+                />
+                <Toaster richColors closeButton />
+              </div>
             </div>
           </>
         ) : props.type === 'track' ? (
-          <h1>TRACK</h1>
+          <>
+            <div className="modal__content__data">
+              <label htmlFor="trackTitle">Title : </label>
+              <input
+                id="trackTitle"
+                name="title"
+                type="text"
+                value={track.title}
+                onChange={e => {
+                  handleInput(e);
+                }}
+              />
+              <p>Duration : {track && convertDuration(track.duration)}</p>
+              {/* <p>Link : {track && track.url}</p> */}
+              <audio controls src={track.url} />
+            </div>
+            <div className="modal__content__bottom">
+              <div className="modal__content__bottom__buttons">
+                <Button
+                  label="Edit"
+                  onClickFunction={() =>
+                    toast.warning('Confirm updating ?', {
+                      action: {
+                        label: 'Yes',
+                        onClick: () =>
+                          applyChanges(track._id, track, props.updateList),
+                      },
+                    })
+                  }
+                />
+                <Button
+                  label="DELETE"
+                  onClickFunction={() =>
+                    toast.warning('Confirm deleting ?', {
+                      action: {
+                        label: 'Yes',
+                        onClick: e => deleteElement(e, track._id),
+                      },
+                    })
+                  }
+                />
+                <Toaster richColors closeButton />
+              </div>
+            </div>
+          </>
         ) : null}
       </div>
     </>

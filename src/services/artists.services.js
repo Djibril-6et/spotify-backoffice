@@ -15,4 +15,10 @@ export default {
       body: JSON.stringify(payload),
     }).then(res => res.json());
   },
+
+  deleteArtist(id) {
+    return fetch(`${API_URL_BASE}/artist/delete/${id}`, {
+      method: 'DELETE',
+    }).then(res => res.json());
+  },
 };

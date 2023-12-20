@@ -14,4 +14,10 @@ export default {
       body: JSON.stringify(payload),
     }).then(res => res.json());
   },
+
+  deleteAlbum(id) {
+    return fetch(`${API_URL_BASE}/album/delete/${id}`, {
+      method: 'DELETE',
+    }).then(res => res.json());
+  },
 };

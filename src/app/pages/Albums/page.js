@@ -39,7 +39,7 @@ const Index = () => {
             setAlbums(res);
           })
           .catch(err => console.log('err ', err));
-      }, 30000);
+      }, 300);
 
       setDelayTimeout(newTimeout);
     } else {
@@ -53,6 +53,20 @@ const Index = () => {
     }
   }, [searchTerm]);
 
+  const [forceUpdateIndex, setForceUpdateIndex] = useState(0);
+
+  const updateAlbumList = updatedAlbum => {
+    if (updatedAlbum && updatedAlbum._id) {
+      const updatedAlbums = albums.map(album =>
+        album._id === updatedAlbum._id ? updatedAlbum : album,
+      );
+      setAlbums(updatedAlbums);
+      setForceUpdateIndex(prev => prev + 1);
+    } else {
+      console.error("L'objet updatedAlbum est invalide :", updatedAlbum);
+    }
+  };
+
   return (
     <>
       <main>
@@ -63,6 +77,7 @@ const Index = () => {
             closeFunction={() => setIsModalActive(!isModalActive)}
             type="album"
             album={myAlbum}
+            updateList={updateAlbumList}
           />
         ) : (
           ''

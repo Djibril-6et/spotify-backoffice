@@ -78,7 +78,7 @@ const Index = () => {
             closeFunction={() => closeFunction()}
             type="artist"
             artist={myArtist}
-            updateArtistList={updateArtistList}
+            updateList={updateArtistList}
           />
         ) : (
           ''

@@ -78,7 +78,7 @@ const Index = () => {
             closeFunction={() => closeFunction()}
             type="track"
             track={myTrack}
-            updateTrackList={updateTrackList}
+            updateList={updateTrackList}
           />
         ) : (
           ''
