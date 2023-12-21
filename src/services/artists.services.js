@@ -6,6 +6,16 @@ export default {
     return fetch(`${API_URL_BASE}/artist`).then(response => response.json());
   },
 
+  newTrack(payload) {
+    return fetch(`${API_URL_BASE}/artist/new-artist`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    }).then(res => res.json());
+  },
+
   updateArtist(id, payload) {
     return fetch(`${API_URL_BASE}/artist/update/${id}`, {
       method: 'PUT',

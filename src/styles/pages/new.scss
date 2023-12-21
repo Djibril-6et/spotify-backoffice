@@ -1,0 +1,56 @@
+@import "../variables.scss";
+
+.home__sections {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 60%;
+  max-width: 60%;
+  margin: 0 auto;
+  padding-top: 40px;
+}
+
+.home__section {
+  width: 100%;
+  background-color: rgba($color: $secondary-color, $alpha: 0.9);
+  margin-bottom: 20px;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+
+  &__header {
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+
+    &::after {
+      content: '▼';
+      float: right;
+    }
+
+    &.active::after {
+      content: '▲';
+    }
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  &__content {
+    padding: 15px;
+    max-height: 50vh;
+    overflow: hidden;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}

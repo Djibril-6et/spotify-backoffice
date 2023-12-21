@@ -4,7 +4,42 @@ import artistsServices from '@/services/artists.services';
 import albumsServices from '@/services/albums.services';
 import Button from '../Button';
 import tracksServices from '@/services/tracks.services';
+import {DndProvider, useDrag, useDrop} from 'react-dnd';
+import {HTML5Backend} from 'react-dnd-html5-backend';
 import {Toaster, toast} from 'sonner';
+
+const DraggableTrack = ({trackId, index, removeTrack, updateTrackOrder}) => {
+  const [, ref] = useDrag({
+    type: 'TRACK',
+    item: {index},
+  });
+
+  const [, drop] = useDrop({
+    accept: 'TRACK',
+    hover: item => {
+      const draggedIndex = item.index;
+      const targetIndex = index;
+
+      console.log('Dragging track:', trackId);
+      console.log('Dragged from index:', draggedIndex);
+      console.log('Dropped at index:', targetIndex);
+
+      if (draggedIndex === targetIndex) {
+        return;
+      }
+
+      updateTrackOrder(draggedIndex, targetIndex);
+      item.index = targetIndex;
+    },
+  });
+
+  return (
+    <li ref={node => ref(drop(node))}>
+      <p>{trackId}</p>
+      <button onClick={removeTrack}>Remove Track</button>
+    </li>
+  );
+};
 
 const Index = props => {
   const [artist, setArtist] = useState({
@@ -69,11 +104,11 @@ const Index = props => {
   }
 
   const handleInput = e => {
-    if (props.type == 'artist') {
+    if (props.type === 'artist') {
       setArtist({...artist, [e.target.name]: e.target.value});
-    } else if (props.type == 'album') {
+    } else if (props.type === 'album') {
       setAlbum({...album, [e.target.name]: e.target.value});
-    } else if (props.type == 'track') {
+    } else if (props.type === 'track') {
       setTrack({...track, [e.target.name]: e.target.value});
     }
   };
@@ -86,12 +121,12 @@ const Index = props => {
   };
 
   const removeTrack = trackId => {
-    if (props.type == 'artist') {
+    if (props.type === 'artist') {
       setArtist(prevArtist => ({
         ...prevArtist,
         tracks: prevArtist.tracks.filter(id => id !== trackId),
       }));
-    } else if (props.type == 'album') {
+    } else if (props.type === 'album') {
       setAlbum(prevAlbum => ({
         ...prevAlbum,
         tracks: prevAlbum.tracks.filter(id => id !== trackId),
@@ -100,22 +135,21 @@ const Index = props => {
   };
 
   const applyChanges = (id, new_values, updatedArtist) => {
-    // e.preventDefault();
-    if (props.type == 'artist') {
+    if (props.type === 'artist') {
       artistsServices
         .updateArtist(id, new_values)
         .then(artist => {
           console.log(artist);
         })
         .catch(err => console.log(err));
-    } else if (props.type == 'album') {
+    } else if (props.type === 'album') {
       albumsServices
         .updateAlbum(id, new_values)
         .then(album => {
           console.log(album);
         })
         .catch(err => console.log(err));
-    } else if (props.type == 'track') {
+    } else if (props.type === 'track') {
       tracksServices
         .updateTrack(id, new_values)
         .then(track => {
@@ -127,23 +161,22 @@ const Index = props => {
     props.closeFunction();
   };
 
-  const deleteElement = (e, id) => {
-    e.preventDefault();
-    if (props.type == 'artist') {
+  const deleteElement = id => {
+    if (props.type === 'artist') {
       artistsServices
         .deleteArtist(id)
         .then(del => {
           console.log(del);
         })
         .catch(err => console.log(err));
-    } else if (props.type == 'album') {
+    } else if (props.type === 'album') {
       albumsServices
         .deleteAlbum(id)
         .then(del => {
           console.log(del);
         })
         .catch(err => console.log(err));
-    } else if (props.type == 'track') {
+    } else if (props.type === 'track') {
       tracksServices
         .deleteTrack(id)
         .then(del => {
@@ -151,6 +184,8 @@ const Index = props => {
         })
         .catch(err => console.log(err));
     }
+
+    props.closeFunction();
   };
 
   const pad = num => {
@@ -158,201 +193,204 @@ const Index = props => {
   };
 
   const convertDuration = duration => {
-    // Convertir la durée en secondes
     let seconds = parseInt(duration, 10);
-
-    // Calculer les heures, minutes et secondes
     let hours = Math.floor(seconds / 3600);
     let minutes = Math.floor((seconds % 3600) / 60);
     let remainingSeconds = seconds % 60;
-
-    // Formater le résultat
     let formattedDuration = `${pad(hours)}:${pad(minutes)}:${pad(
       remainingSeconds,
     )}`;
-
     return formattedDuration;
   };
 
   return props.isActive ? (
-    <>
-      <div className="modal__wrapper" onClick={props.closeFunction}></div>
-      <div className="modal__content">
-        <div className="modal__content__top">
-          <p
-            className="modal__content__top__close"
-            onClick={props.closeFunction}>
-            X
-          </p>
+    <DndProvider backend={HTML5Backend}>
+      <>
+        <div className="modal__wrapper" onClick={props.closeFunction}></div>
+        <div className="modal__content">
+          <div className="modal__content__top">
+            <p
+              className="modal__content__top__close"
+              onClick={props.closeFunction}>
+              X
+            </p>
+          </div>
+          {props.type === 'artist' ? (
+            <>
+              <div className="modal__content__data">
+                <label htmlFor="artistName">Name : </label>
+                <input
+                  id="artistName"
+                  name="name"
+                  type="text"
+                  value={artist.name}
+                  onChange={e => {
+                    handleInput(e);
+                  }}
+                />
+                <h3>Albums:</h3>
+                <ul>
+                  {artist.albums.map(albumId => (
+                    <li key={albumId}>
+                      <p>{albumId}</p>
+                      <button onClick={() => removeAlbum(albumId)}>
+                        Remove Album
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <h3>Tracks:</h3>
+                <ul>
+                  {artist.tracks.map(trackId => (
+                    <li key={trackId}>
+                      <p>{trackId}</p>
+                      <button onClick={() => removeTrack(trackId)}>
+                        Remove Track
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="modal__content__bottom">
+                <div className="modal__content__bottom__buttons">
+                  <Button
+                    label="Edit"
+                    onClickFunction={() =>
+                      toast.warning('Confirm updating ?', {
+                        action: {
+                          label: 'Yes',
+                          onClick: () =>
+                            applyChanges(artist._id, artist, props.updateList),
+                        },
+                      })
+                    }
+                  />
+                  <Button
+                    label="DELETE"
+                    onClickFunction={() =>
+                      toast.warning('Confirm deleting ?', {
+                        action: {
+                          label: 'Yes',
+                          onClick: () => deleteElement(artist._id),
+                        },
+                      })
+                    }
+                  />
+                  <Toaster richColors closeButton />
+                </div>
+              </div>
+            </>
+          ) : props.type === 'album' ? (
+            <>
+              <div className="modal__content__data">
+                <label htmlFor="albumTitle">Title : </label>
+                <input
+                  id="albumTitle"
+                  name="title"
+                  type="text"
+                  value={album.title}
+                  onChange={e => handleInput(e)}
+                />
+                <h3>Tracks :</h3>
+                <ul>
+                  {album.tracks.map((trackId, index) => (
+                    <DraggableTrack
+                      key={trackId}
+                      trackId={trackId}
+                      index={index}
+                      removeTrack={() => removeTrack(trackId)}
+                      updateTrackOrder={(oldIndex, newIndex) => {
+                        const updatedTracks = [...album.tracks];
+                        updatedTracks.splice(
+                          newIndex,
+                          0,
+                          updatedTracks.splice(oldIndex, 1)[0],
+                        );
+                        setAlbum(prevAlbum => ({
+                          ...prevAlbum,
+                          tracks: updatedTracks,
+                        }));
+                      }}
+                    />
+                  ))}
+                </ul>
+              </div>
+              <div className="modal__content__bottom">
+                <div className="modal__content__bottom__buttons">
+                  <Button
+                    label="Edit"
+                    onClickFunction={() =>
+                      toast.warning('Confirm updating ?', {
+                        action: {
+                          label: 'Yes',
+                          onClick: () =>
+                            applyChanges(album._id, album, props.updateList),
+                        },
+                      })
+                    }
+                  />
+                  <Button
+                    label="DELETE"
+                    onClickFunction={() =>
+                      toast.warning('Confirm deleting ?', {
+                        action: {
+                          label: 'Yes',
+                          onClick: () => deleteElement(album._id),
+                        },
+                      })
+                    }
+                  />
+                  <Toaster richColors closeButton />
+                </div>
+              </div>
+            </>
+          ) : props.type === 'track' ? (
+            <>
+              <div className="modal__content__data">
+                <label htmlFor="trackTitle">Title : </label>
+                <input
+                  id="trackTitle"
+                  name="title"
+                  type="text"
+                  value={track.title}
+                  onChange={e => handleInput(e)}
+                />
+                <p>Duration : {track && convertDuration(track.duration)}</p>
+                <audio controls src={track.url} />
+              </div>
+              <div className="modal__content__bottom">
+                <div className="modal__content__bottom__buttons">
+                  <Button
+                    label="Edit"
+                    onClickFunction={() =>
+                      toast.warning('Confirm updating ?', {
+                        action: {
+                          label: 'Yes',
+                          onClick: () =>
+                            applyChanges(track._id, track, props.updateList),
+                        },
+                      })
+                    }
+                  />
+                  <Button
+                    label="DELETE"
+                    onClickFunction={() =>
+                      toast.warning('Confirm deleting ?', {
+                        action: {
+                          label: 'Yes',
+                          onClick: () => deleteElement(track._id),
+                        },
+                      })
+                    }
+                  />
+                  <Toaster richColors closeButton />
+                </div>
+              </div>
+            </>
+          ) : null}
         </div>
-        {props.type === 'artist' ? (
-          <>
-            <div className="modal__content__data">
-              <label htmlFor="artistName">Name : </label>
-              <input
-                id="artistName"
-                name="name"
-                type="text"
-                value={artist.name}
-                onChange={e => {
-                  handleInput(e);
-                }}
-              />
-              <h3>Albums:</h3>
-              <ul>
-                {artist.albums.map(albumId => (
-                  <li key={albumId}>
-                    <p>{albumId}</p>
-                    <button onClick={() => removeAlbum(albumId)}>
-                      Remove Album
-                    </button>
-                  </li>
-                ))}
-              </ul>
-              <h3>Tracks:</h3>
-              <ul>
-                {artist.tracks.map(trackId => (
-                  <li key={trackId}>
-                    <p>{trackId}</p>
-                    <button onClick={() => removeTrack(trackId)}>
-                      Remove Track
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="modal__content__bottom">
-              <div className="modal__content__bottom__buttons">
-                <Button
-                  label="Edit"
-                  onClickFunction={() =>
-                    toast.warning('Confirm updating ?', {
-                      action: {
-                        label: 'Yes',
-                        onClick: () =>
-                          applyChanges(artist._id, artist, props.updateList),
-                      },
-                    })
-                  }
-                />
-                <Button
-                  label="DELETE"
-                  onClickFunction={() =>
-                    toast.warning('Confirm deleting ?', {
-                      action: {
-                        label: 'Yes',
-                        onClick: e => deleteElement(e, artist._id),
-                      },
-                    })
-                  }
-                />
-                <Toaster richColors closeButton />
-              </div>
-            </div>
-          </>
-        ) : props.type === 'album' ? (
-          <>
-            <div className="modal__content__data">
-              <label htmlFor="albumTitle">Title : </label>
-              <input
-                id="albumTitle"
-                name="title"
-                type="text"
-                value={album.title}
-                onChange={e => {
-                  handleInput(e);
-                }}
-              />
-              <h3>Tracks :</h3>
-              <ul>
-                {album.tracks.map(trackId => (
-                  <li key={trackId}>
-                    <p>{trackId}</p>
-                    <button onClick={() => removeTrack(trackId)}>
-                      Remove Track
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="modal__content__bottom">
-              <div className="modal__content__bottom__buttons">
-                <Button
-                  label="Edit"
-                  onClickFunction={() =>
-                    toast.warning('Confirm updating ?', {
-                      action: {
-                        label: 'Yes',
-                        onClick: () =>
-                          applyChanges(album._id, album, props.updateList),
-                      },
-                    })
-                  }
-                />
-                <Button
-                  label="DELETE"
-                  onClickFunction={() =>
-                    toast.warning('Confirm deleting ?', {
-                      action: {
-                        label: 'Yes',
-                        onClick: e => deleteElement(e, album._id),
-                      },
-                    })
-                  }
-                />
-                <Toaster richColors closeButton />
-              </div>
-            </div>
-          </>
-        ) : props.type === 'track' ? (
-          <>
-            <div className="modal__content__data">
-              <label htmlFor="trackTitle">Title : </label>
-              <input
-                id="trackTitle"
-                name="title"
-                type="text"
-                value={track.title}
-                onChange={e => {
-                  handleInput(e);
-                }}
-              />
-              <p>Duration : {track && convertDuration(track.duration)}</p>
-              {/* <p>Link : {track && track.url}</p> */}
-              <audio controls src={track.url} />
-            </div>
-            <div className="modal__content__bottom">
-              <div className="modal__content__bottom__buttons">
-                <Button
-                  label="Edit"
-                  onClickFunction={() =>
-                    toast.warning('Confirm updating ?', {
-                      action: {
-                        label: 'Yes',
-                        onClick: () =>
-                          applyChanges(track._id, track, props.updateList),
-                      },
-                    })
-                  }
-                />
-                <Button
-                  label="DELETE"
-                  onClickFunction={() =>
-                    toast.warning('Confirm deleting ?', {
-                      action: {
-                        label: 'Yes',
-                        onClick: e => deleteElement(e, track._id),
-                      },
-                    })
-                  }
-                />
-                <Toaster richColors closeButton />
-              </div>
-            </div>
-          </>
-        ) : null}
-      </div>
-    </>
+      </>
+    </DndProvider>
   ) : null;
 };
 

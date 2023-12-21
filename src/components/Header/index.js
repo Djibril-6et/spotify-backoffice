@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import '../../styles/components/header.scss';
 import BlackLogo from '../../assets/logo/black-logo.svg';
+import Button from '../Button';
 
 const Index = () => {
   return (
@@ -33,6 +34,11 @@ const Index = () => {
             <li className="header__main__right__nav__list__item">
               <Link href="/pages/Tracks">
                 <p className="nav__link">Tracks</p>
+              </Link>
+            </li>
+            <li className="header__main__right__nav__list__item">
+              <Link href="/pages/New">
+                <Button label="DELETE" />
               </Link>
             </li>
           </ul>
