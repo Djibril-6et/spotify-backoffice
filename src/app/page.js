@@ -7,6 +7,12 @@ import Header from '../components/Header';
 import tracksServices from '@/services/tracks.services';
 import albumsServices from '@/services/albums.services';
 import artistsServices from '@/services/artists.services';
+const {
+  NEXT_PUBLIC_ACCESS_KEY_ID,
+  NEXT_PUBLIC_SECRET_ACCESS_KEY,
+  NEXT_PUBLIC_API_BASE_URL,
+} = process.env;
+require('dotenv').config();
 
 export default function Home() {
   const [countTracks, setCountTracks] = useState(0);

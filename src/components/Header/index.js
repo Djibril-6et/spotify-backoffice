@@ -38,7 +38,7 @@ const Index = () => {
             </li>
             <li className="header__main__right__nav__list__item">
               <Link href="/pages/New">
-                <Button label="DELETE" />
+                <Button label="Add" />
               </Link>
             </li>
           </ul>

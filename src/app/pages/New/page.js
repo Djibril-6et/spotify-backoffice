@@ -6,6 +6,7 @@ import Button from '../../../components/Button';
 import artistsServices from '@/services/artists.services';
 import albumsServices from '@/services/albums.services';
 import tracksServices from '@/services/tracks.services';
+import {uploadNewTrack} from '@/Functions/AddNewTrack';
 
 const Page = () => {
   const [activeSection, setActiveSection] = useState(null);
@@ -104,11 +105,11 @@ const Page = () => {
   };
 
   const createArtist = n_artist => {
-    // artistsServices
-    //   .newTrack(n_artist)
-    //   .then(newArtist => console.log(newArtist))
-    //   .catch(err => console.log(err));
-    console.log(artist);
+    artistsServices
+      .newTrack(n_artist)
+      .then(newArtist => console.log(newArtist))
+      .catch(err => console.log(err));
+    // console.log(artist);
   };
 
   const handleAlbumTrackAddition = e => {
@@ -127,6 +128,51 @@ const Page = () => {
     // Logique pour créer l'album avec les pistes sélectionnées
     console.log(album);
   };
+
+  const [track, setTrack] = useState({
+    audioFile: null,
+    artist: '',
+    album: '',
+  });
+
+  const handleAudioFileAddition = event => {
+    const file = event.target.files[0];
+    setTrack(prevTrack => ({
+      ...prevTrack,
+      audioFile: file,
+    }));
+  };
+
+  const handleTrackArtistChange = event => {
+    setTrack(prevTrack => ({
+      ...prevTrack,
+      artist: event.target.value,
+    }));
+  };
+
+  const handleTrackAlbumChange = event => {
+    setTrack(prevTrack => ({
+      ...prevTrack,
+      album: event.target.value,
+    }));
+  };
+
+  const handleTrackUpload = e => {
+    e.preventDefault();
+    // Ensure that an audio file is selected before initiating the upload
+    if (track.audioFile) {
+      // Pass the track object to the function that handles the upload
+      uploadNewTrack(track);
+    } else {
+      console.error('Please select an audio file before uploading.');
+    }
+  };
+
+  // const uploadSingleTrack = track => {
+  //   // Your existing uploadSingleTrack function goes here
+  //   // Make sure to modify it as needed to handle the track object passed from this component
+  //   uploadSingleTrack(track);
+  // };
 
   return (
     <>
@@ -306,10 +352,61 @@ const Page = () => {
               onClick={() => toggleSection('tracks')}>
               <p className="home__section__title">Tracks</p>
             </div>
-            {/* Ajoute le contenu de la section Tracks ici */}
+            {/* Content of the Tracks section */}
             {activeSection === 'tracks' && (
               <div className="home__section__content">
-                {/* Contenu de la section Tracks */}
+                <form>
+                  {/* Add audio file input */}
+                  <label htmlFor="audioFile">Add Audio File:</label>
+                  <input
+                    type="file"
+                    id="audioFile"
+                    accept="audio/*"
+                    onChange={handleAudioFileAddition}
+                  />
+
+                  {/* Input for Artist */}
+                  <label htmlFor="trackArtist">Artist:</label>
+                  <input
+                    type="text"
+                    id="trackArtist"
+                    value={track.artist}
+                    onChange={handleTrackArtistChange}
+                  />
+
+                  {/* Input for Album */}
+                  <label htmlFor="trackAlbum">Album:</label>
+                  <input
+                    type="text"
+                    id="trackAlbum"
+                    value={track.album}
+                    onChange={handleTrackAlbumChange}
+                  />
+
+                  {/* Display selected audio file, artist, and album */}
+                  {track.audioFile && (
+                    <div>
+                      <h3>Selected Audio File:</h3>
+                      <p>{track.audioFile.name}</p>
+                    </div>
+                  )}
+                  {track.artist && (
+                    <div>
+                      <h3>Selected Artist:</h3>
+                      <p>{track.artist}</p>
+                    </div>
+                  )}
+                  {track.album && (
+                    <div>
+                      <h3>Selected Album:</h3>
+                      <p>{track.album}</p>
+                    </div>
+                  )}
+                </form>
+                <Button
+                  label="Upload Track"
+                  onClickFunction={e => handleTrackUpload(e)}
+                />
               </div>
             )}
           </div>
