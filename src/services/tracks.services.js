@@ -1,5 +1,5 @@
 // const API_URL_BASE = process.env.API_BASE_URL;
-const API_URL_BASE = 'http://localhost:9000/api';
+const API_URL_BASE = 'http://16.171.148.207:9000/api';
 
 export default {
   getTracks() {
