@@ -95,9 +95,16 @@ const Index = () => {
           <ul className="artist__list__list">
             {albums &&
               albums
-                .filter(album =>
-                  album.title.toLowerCase().includes(searchTerm.toLowerCase()),
+                .filter(
+                  album =>
+                    album &&
+                    album.title &&
+                    typeof album.title === 'string' &&
+                    album.title
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()),
                 )
+
                 .map(album => (
                   <li
                     key={album._id}

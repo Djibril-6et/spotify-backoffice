@@ -7,6 +7,10 @@ import artistsServices from '@/services/artists.services';
 import albumsServices from '@/services/albums.services';
 import tracksServices from '@/services/tracks.services';
 import {uploadNewTrack} from '@/Functions/AddNewTrack';
+import {addTrackToBase} from '@/Functions/AddFileToBase';
+import axios from 'axios';
+
+const musicMetadata = require('music-metadata-browser');
 
 const Page = () => {
   const [activeSection, setActiveSection] = useState(null);
@@ -130,7 +134,7 @@ const Page = () => {
   };
 
   const [track, setTrack] = useState({
-    audioFile: null,
+    audio: null,
     artist: '',
     album: '',
   });
@@ -139,7 +143,7 @@ const Page = () => {
     const file = event.target.files[0];
     setTrack(prevTrack => ({
       ...prevTrack,
-      audioFile: file,
+      audio: file,
     }));
   };
 
@@ -157,12 +161,42 @@ const Page = () => {
     }));
   };
 
-  const handleTrackUpload = e => {
-    e.preventDefault();
+  const handleTrackUpload = () => {
     // Ensure that an audio file is selected before initiating the upload
-    if (track.audioFile) {
-      // Pass the track object to the function that handles the upload
+    if (track.audio) {
       uploadNewTrack(track);
+
+      console.log('Before FormData: ', track.audio);
+
+      const formData = new FormData();
+      formData.set('audio', track.audio, track.audio.name);
+
+      console.log('BACK ', track);
+      console.log('DATA ', formData);
+      console.log("FormData.get('audio'):", formData.get('audio'));
+
+      axios
+        .post('http://localhost:9000/api/track/post-aws', formData)
+        .then(res => console.log(res))
+        .catch(err => console.log(err));
+
+      musicMetadata
+        .parseBlob(track.audio)
+        .then(metadata => {
+          tracksServices
+            .insertTrackToBaseFromFile(
+              encodeURIComponent(metadata.common.title),
+              encodeURIComponent(metadata.format.duration),
+              track.audio.name,
+              encodeURIComponent(metadata.common.album),
+              encodeURIComponent(metadata.common.artist),
+            )
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+        })
+        .catch(error => {
+          console.error('Error parsing metadata: ', error);
+        });
     } else {
       console.error('Please select an audio file before uploading.');
     }
@@ -366,31 +400,31 @@ const Page = () => {
                   />
 
                   {/* Input for Artist */}
-                  <label htmlFor="trackArtist">Artist:</label>
+                  {/* <label htmlFor="trackArtist">Artist:</label>
                   <input
                     type="text"
                     id="trackArtist"
                     value={track.artist}
                     onChange={handleTrackArtistChange}
-                  />
+                  /> */}
 
                   {/* Input for Album */}
-                  <label htmlFor="trackAlbum">Album:</label>
+                  {/* <label htmlFor="trackAlbum">Album:</label>
                   <input
                     type="text"
                     id="trackAlbum"
                     value={track.album}
                     onChange={handleTrackAlbumChange}
-                  />
+                  /> */}
 
                   {/* Display selected audio file, artist, and album */}
-                  {track.audioFile && (
+                  {track.audio && (
                     <div>
                       <h3>Selected Audio File:</h3>
-                      <p>{track.audioFile.name}</p>
+                      <p>{track.audio.name}</p>
                     </div>
                   )}
-                  {track.artist && (
+                  {/* {track.artist && (
                     <div>
                       <h3>Selected Artist:</h3>
                       <p>{track.artist}</p>
@@ -401,11 +435,14 @@ const Page = () => {
                       <h3>Selected Album:</h3>
                       <p>{track.album}</p>
                     </div>
-                  )}
+                  )} */}
                 </form>
                 <Button
                   label="Upload Track"
-                  onClickFunction={e => handleTrackUpload(e)}
+                  onClickFunction={e => {
+                    e.preventDefault();
+                    handleTrackUpload(e);
+                  }}
                 />
               </div>
             )}

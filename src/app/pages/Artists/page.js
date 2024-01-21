@@ -96,9 +96,16 @@ const Index = () => {
           <ul className="artist__list__list">
             {artists &&
               artists
-                .filter(artist =>
-                  artist.name.toLowerCase().includes(searchTerm.toLowerCase()),
+                .filter(
+                  artist =>
+                    artist &&
+                    artist.name &&
+                    typeof artist.name === 'string' &&
+                    artist.name
+                      .toLowerCase()
+                      .includes(searchTerm.toLowerCase()),
                 )
+
                 .map(artist => (
                   <li
                     key={artist._id}
@@ -119,39 +126,3 @@ const Index = () => {
 };
 
 export default Index;
-
-// {
-//   "_id": "6584ad7516f4726898740ce1",
-//   "name": "Elvis Presley",
-//   "__v": 0,
-//   "albums": [
-//       "6584ad7516f4726898740cf7",
-//       "6584ad8e16f4726898744809"
-//   ],
-//   "tracks": [
-//       "6584ad75b15af1ca579405a5",
-//       "6584ad76b15af1ca579405ab",
-//       "6584ad76b15af1ca579405b1",
-//       "6584ad76b15af1ca579405b7",
-//       "6584ad76b15af1ca579405bd",
-//       "6584ad76b15af1ca579405c3",
-//       "6584ad76b15af1ca579405c9",
-//       "6584ad76b15af1ca579405cf",
-//       "6584ad76b15af1ca579405d5",
-//       "6584ad76b15af1ca579405db",
-//       "6584ad76b15af1ca579405e1",
-//       "6584ad76b15af1ca579405e7",
-//       "6584ad8eb15af1ca57940de5",
-//       "6584ad8eb15af1ca57940deb",
-//       "6584ad8eb15af1ca57940df1",
-//       "6584ad8eb15af1ca57940df7",
-//       "6584ad8eb15af1ca57940dfd",
-//       "6584ad8eb15af1ca57940e03",
-//       "6584ad8eb15af1ca57940e09",
-//       "6584ad8eb15af1ca57940e0f",
-//       "6584ad8eb15af1ca57940e15",
-//       "6584ad8eb15af1ca57940e1b",
-//       "6584ad8eb15af1ca57940e21",
-//       "6584ad8eb15af1ca57940e27"
-//   ]
-// }

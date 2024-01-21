@@ -6,10 +6,32 @@ export default {
     return fetch(`${API_URL_BASE}/track`).then(response => response.json());
   },
 
+  getOneTracksByName(title) {
+    return fetch(`${API_URL_BASE}/track/name/${title}`).then(response =>
+      response.json(),
+    );
+  },
+
+  insertTrackToBaseFromFile(title, duration, file, album, artist) {
+    return fetch(
+      `${API_URL_BASE}/track/add/${title}/${duration}/${file}/${album}/${artist}`,
+    ).then(response => response.json());
+  },
+
   getCountTracks() {
     return fetch(`${API_URL_BASE}/track/total`).then(response =>
       response.json(),
     );
+  },
+
+  uploadToAWS(payload) {
+    return fetch(`${API_URL_BASE}/track/post-aws`, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    }).then(res => res.json());
   },
 
   newTrack(payload) {

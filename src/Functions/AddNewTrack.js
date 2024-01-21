@@ -1,6 +1,7 @@
-// AddNewTrack.js
 const AWS = require('aws-sdk');
 const musicMetadata = require('music-metadata-browser');
+// import ffmpeg from 'fluent-ffmpeg';
+// const ffmpeg = require('fluent-ffmpeg');
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -12,7 +13,6 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 const bucketName = 'tracksbucket';
-
 const processedAlbums = {};
 
 const uploadNewTrack = async track => {
@@ -48,15 +48,55 @@ const uploadNewTrack = async track => {
         }
       }
 
-      const uploadParams = {
-        Bucket: bucketName,
-        Key: albumName + '/' + file.name,
-        Body: file,
-      };
+      const fileExtension = file.name.split('.').pop().toLowerCase();
 
-      const data = await s3.upload(uploadParams).promise();
+      if (fileExtension !== 'm4a') {
+        // Convert the file to m4a format
+        const convertedFilePath = `/path/to/temp/${file.name}.m4a`;
 
-      console.log(`Fichier uploadé avec succès. URL S3 :`, data.Location);
+        // await new Promise((resolve, reject) => {
+        //   ffmpeg()
+        //     .input(file)
+        //     .audioCodec('aac')
+        //     .audioBitrate('192k')
+        //     .on('end', () => {
+        //       console.log('Conversion terminée');
+        //       resolve();
+        //     })
+        //     .on('error', err => {
+        //       console.error('Erreur lors de la conversion : ' + err);
+        //       reject(err);
+        //     })
+        //     .save(convertedFilePath);
+        // });
+
+        // Use the converted file for uploading
+        const convertedFile = {
+          name: `${file.name}.m4a`,
+          path: convertedFilePath,
+        };
+
+        const uploadParams = {
+          Bucket: bucketName,
+          Key: albumName + '/' + convertedFile.name,
+          Body: convertedFile.path,
+        };
+
+        const data = await s3.upload(uploadParams).promise();
+
+        console.log(`Fichier uploadé avec succès. URL S3 :`, data.Location);
+      } else {
+        // Use the original file for uploading
+        const uploadParams = {
+          Bucket: bucketName,
+          Key: albumName + '/' + file.name,
+          Body: file,
+        };
+
+        const data = await s3.upload(uploadParams).promise();
+
+        console.log(`Fichier uploadé avec succès. URL S3 :`, data.Location);
+      }
     } catch (error) {
       console.error(
         `Erreur lors de la lecture des métadonnées du fichier :`,
