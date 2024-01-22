@@ -1,9 +1,9 @@
 import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import '../../styles/components/header.scss';
+// import '../../styles/components/header.scss';
 import BlackLogo from '../../assets/logo/black-logo.svg';
-import Button from '../Button';
+// import Button from '../Button';
 
 const Index = () => {
   return (
@@ -38,7 +38,7 @@ const Index = () => {
             </li>
             <li className="header__main__right__nav__list__item">
               <Link href="/pages/New">
-                <Button label="Add" />
+                <button>add</button>
               </Link>
             </li>
           </ul>

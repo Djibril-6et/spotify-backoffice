@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import Header from '../../../components/Header';
 import '../../../styles/pages/new.scss';
-import Button from '../../../components/Button';
+// import Button from '../../../components/Button';
 import artistsServices from '@/services/artists.services';
 import albumsServices from '@/services/albums.services';
 import tracksServices from '@/services/tracks.services';
@@ -176,7 +176,7 @@ const Page = () => {
       console.log("FormData.get('audio'):", formData.get('audio'));
 
       axios
-        .post('http://16.171.148.207:9000/api', formData)
+        .post('http://13.51.198.202:9000/api', formData)
         .then(res => console.log(res))
         .catch(err => console.log(err));
 
@@ -239,11 +239,12 @@ const Page = () => {
                   <label htmlFor="albumList">Add Albums:</label>
                   <select id="albumList" onChange={handleAlbumAddition}>
                     <option value="">Select an Album</option>
-                    {inBaseAlbums.map(album => (
-                      <option key={album._id} value={album._id}>
-                        {album.title}
-                      </option>
-                    ))}
+                    {inBaseAlbums &&
+                      inBaseAlbums.map(album => (
+                        <option key={album._id} value={album._id}>
+                          {album.title}
+                        </option>
+                      ))}
                   </select>
 
                   {/* Display selected albums */}
@@ -267,11 +268,12 @@ const Page = () => {
                   <label htmlFor="trackList">Add Tracks:</label>
                   <select id="trackList" onChange={handleTrackAddition}>
                     <option value="">Select a Track</option>
-                    {inBaseTracks.map(track => (
-                      <option key={track._id} value={track._id}>
-                        {track.title}
-                      </option>
-                    ))}
+                    {inBaseTracks &&
+                      inBaseTracks.map(track => (
+                        <option key={track._id} value={track._id}>
+                          {track.title}
+                        </option>
+                      ))}
                   </select>
 
                   {/* Display selected tracks */}
@@ -293,10 +295,9 @@ const Page = () => {
                     </div>
                   )}
                 </form>
-                <Button
-                  label="Create"
-                  onClickFunction={() => createArtist(artist)}
-                />
+                <button onClick={() => createArtist(artist)}>
+                  Create Artist
+                </button>
               </div>
             )}
           </div>
@@ -365,10 +366,9 @@ const Page = () => {
                           </div>
                         )}
                       </form>
-                      <Button
-                        label="Create Album"
-                        onClickFunction={() => handleAlbumCreation()}
-                      />
+                      <button onClick={() => handleAlbumCreation()}>
+                        Create Album
+                      </button>
                     </div>
                   )}
                 </div>
@@ -437,13 +437,13 @@ const Page = () => {
                     </div>
                   )} */}
                 </form>
-                <Button
-                  label="Upload Track"
-                  onClickFunction={e => {
+                <button
+                  onClick={e => {
                     e.preventDefault();
                     handleTrackUpload(e);
-                  }}
-                />
+                  }}>
+                  Upload Track
+                </button>
               </div>
             )}
           </div>

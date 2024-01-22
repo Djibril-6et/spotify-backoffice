@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import '../../styles/components/modal.scss';
 import artistsServices from '@/services/artists.services';
 import albumsServices from '@/services/albums.services';
-import Button from '../Button';
+// import Button from '../Button';
 import tracksServices from '@/services/tracks.services';
 import {DndProvider, useDrag, useDrop} from 'react-dnd';
 import {HTML5Backend} from 'react-dnd-html5-backend';
@@ -253,9 +253,8 @@ const Index = props => {
               </div>
               <div className="modal__content__bottom">
                 <div className="modal__content__bottom__buttons">
-                  <Button
-                    label="Edit"
-                    onClickFunction={() =>
+                  <button
+                    onClick={() =>
                       toast.warning('Confirm updating ?', {
                         action: {
                           label: 'Yes',
@@ -263,19 +262,20 @@ const Index = props => {
                             applyChanges(artist._id, artist, props.updateList),
                         },
                       })
-                    }
-                  />
-                  <Button
-                    label="DELETE"
-                    onClickFunction={() =>
+                    }>
+                    Edit
+                  </button>
+                  <button
+                    onClick={() =>
                       toast.warning('Confirm deleting ?', {
                         action: {
                           label: 'Yes',
                           onClick: () => deleteElement(artist._id),
                         },
                       })
-                    }
-                  />
+                    }>
+                    DELETE
+                  </button>
                   <Toaster richColors closeButton />
                 </div>
               </div>
@@ -317,9 +317,8 @@ const Index = props => {
               </div>
               <div className="modal__content__bottom">
                 <div className="modal__content__bottom__buttons">
-                  <Button
-                    label="Edit"
-                    onClickFunction={() =>
+                  <button
+                    onClick={() =>
                       toast.warning('Confirm updating ?', {
                         action: {
                           label: 'Yes',
@@ -327,19 +326,20 @@ const Index = props => {
                             applyChanges(album._id, album, props.updateList),
                         },
                       })
-                    }
-                  />
-                  <Button
-                    label="DELETE"
-                    onClickFunction={() =>
+                    }>
+                    Edit
+                  </button>
+                  <button
+                    onClick={() =>
                       toast.warning('Confirm deleting ?', {
                         action: {
                           label: 'Yes',
                           onClick: () => deleteElement(album._id),
                         },
                       })
-                    }
-                  />
+                    }>
+                    DELETE
+                  </button>
                   <Toaster richColors closeButton />
                 </div>
               </div>
@@ -360,9 +360,8 @@ const Index = props => {
               </div>
               <div className="modal__content__bottom">
                 <div className="modal__content__bottom__buttons">
-                  <Button
-                    label="Edit"
-                    onClickFunction={() =>
+                  <button
+                    onClick={() =>
                       toast.warning('Confirm updating ?', {
                         action: {
                           label: 'Yes',
@@ -370,19 +369,20 @@ const Index = props => {
                             applyChanges(track._id, track, props.updateList),
                         },
                       })
-                    }
-                  />
-                  <Button
-                    label="DELETE"
-                    onClickFunction={() =>
+                    }>
+                    Edit
+                  </button>
+                  <button
+                    onClick={() =>
                       toast.warning('Confirm deleting ?', {
                         action: {
                           label: 'Yes',
                           onClick: () => deleteElement(track._id),
                         },
                       })
-                    }
-                  />
+                    }>
+                    DELETE
+                  </button>
                   <Toaster richColors closeButton />
                 </div>
               </div>
