@@ -1,4 +1,4 @@
-const API_URL_BASE = 'http://13.51.198.202:9000/api';
+const API_URL_BASE = 'http://13.49.185.3:9000/api';
 
 export default {
   getAlbums() {

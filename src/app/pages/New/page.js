@@ -176,7 +176,7 @@ const Page = () => {
       console.log("FormData.get('audio'):", formData.get('audio'));
 
       axios
-        .post('http://13.51.198.202:9000/api', formData)
+        .post('http://13.49.185.3:9000/api/track/post-aws', formData)
         .then(res => console.log(res))
         .catch(err => console.log(err));
 
