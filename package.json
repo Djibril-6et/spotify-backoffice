@@ -2,6 +2,9 @@
   "name": "spotify-backoffice",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=v21.6.0"
+  },
   "scripts": {
     "dev": "next dev -p 9001",
     "build": "next build",
