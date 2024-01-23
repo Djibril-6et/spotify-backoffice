@@ -1,0 +1,9 @@
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - nvm install 21
+  build:
+    commands:
+      - npm ci
+      - npm run build
