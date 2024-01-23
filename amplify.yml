@@ -6,6 +6,7 @@ frontend:
         - n 21.6.0
     build:
       commands:
+        - n use 21.6.0
         - npm ci
         - npm run build
   artifacts:
