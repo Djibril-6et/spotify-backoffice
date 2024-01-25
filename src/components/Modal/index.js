@@ -62,8 +62,8 @@ const Index = props => {
     url: '',
   });
 
-  if (props.type == 'artist') {
-    useEffect(() => {
+  useEffect(() => {
+    if (props.type === 'artist') {
       setArtist(prevArtist => ({
         ...prevArtist,
         _id: props.artist._id,
@@ -71,23 +71,14 @@ const Index = props => {
         albums: props.artist.albums,
         tracks: props.artist.tracks,
       }));
-    }, [
-      props.artist._id,
-      props.artist.name,
-      props.artist.albums,
-      props.artist.tracks,
-    ]);
-  } else if (props.type == 'album') {
-    useEffect(() => {
+    } else if (props.type === 'album') {
       setAlbum(prevAlbum => ({
         ...prevAlbum,
         _id: props.album._id,
         title: props.album.title,
         tracks: props.album.tracks,
       }));
-    }, [props.album._id, props.album.title, props.album.tracks]);
-  } else if (props.type == 'track') {
-    useEffect(() => {
+    } else if (props.type === 'track') {
       setTrack(prevTrack => ({
         ...prevTrack,
         _id: props.track._id,
@@ -95,13 +86,21 @@ const Index = props => {
         duration: props.track.duration,
         url: props.track.url,
       }));
-    }, [
-      props.track._id,
-      props.track.title,
-      props.track.duration,
-      props.track.url,
-    ]);
-  }
+    }
+  }, [
+    props.type,
+    props.artist?._id,
+    props.artist?.name,
+    props.artist?.albums,
+    props.artist?.tracks,
+    props.album?._id,
+    props.album?.title,
+    props.album?.tracks,
+    props.track?._id,
+    props.track?.title,
+    props.track?.duration,
+    props.track?.url,
+  ]);
 
   const handleInput = e => {
     if (props.type === 'artist') {
