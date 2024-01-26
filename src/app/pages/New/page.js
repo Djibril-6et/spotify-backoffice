@@ -176,7 +176,10 @@ const Page = () => {
       console.log("FormData.get('audio'):", formData.get('audio'));
 
       axios
-        .post('http://13.49.185.3:9000/api/track/post-aws', formData)
+        .post(
+          'https://spotify-api-r80c.onrender.com/api/track/post-aws',
+          formData,
+        )
         .then(res => console.log(res))
         .catch(err => console.log(err));
 
